@@ -6,7 +6,21 @@ name: Python application
 on:
   push:
     branches: [ "main" ]
-
+  workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Log level'
+        required: true
+        default: 'warning'
+        type: choice
+        options:
+          - info
+          - warning
+          - debug
+      environment:
+        description: 'Environment to deploy'
+        required: false
+        default: 'staging'
 
 permissions:
   contents: read
@@ -29,7 +43,7 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Lint with flake8
       run: |
-        flake8 . --count --exit-zero --statistics
+        flake8 . --exit-zero --statistics -v
 
 
 

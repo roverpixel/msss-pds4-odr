@@ -37,7 +37,7 @@ import argparse
 from bitstring import ConstBitStream as bitstream
 import huffman_table as huffman
 
-#-------------------------------------------------------------
+# -------------------------------------------------------------
 #
 # Original Data Record MSSS Mini-Header 
 # Bit structure breakdown referencing SIS section 4.4
@@ -98,9 +98,9 @@ ae_fields = [
 zstack_fields = [
   ( 'focus_merge_start_camera_product_id',  'uint:32' ),
   ( 'focus_merge_depth',                    'uint:8'  ),
-  ( None,                                   'pad:22'  ), # parms padding
-  ( 'focus_merge_blending_flag',            'uint:1'  ), # 0 off, 1 on
-  ( 'focus_merge_registration_flag',        'uint:1'  )  # 0 off, 1 on
+  ( None,                                   'pad:22'  ),  # parms padding
+  ( 'focus_merge_blending_flag',            'uint:1'  ),  # 0 off, 1 on
+  ( 'focus_merge_registration_flag',        'uint:1'  )   # 0 off, 1 on
 ]
 
 
@@ -158,7 +158,8 @@ MAGIC_INITIAL = 'ff00f0ca'
 # decode bit stream using key and bit format array
 # return as dictionary
 
-def ingest( stream:bitstream, decoder:tuple ) ->dict:
+
+def ingest( stream: bitstream, decoder: tuple ) -> dict:
 
   header = {}
   for name, fmt in decoder:
@@ -169,13 +170,13 @@ def ingest( stream:bitstream, decoder:tuple ) ->dict:
 
 # Parse MSSS Mini-Header
 
-def read_header( stream:bitstream ) ->dict:
+def read_header( stream: bitstream ) -> dict:
 
   # parse bit stream as image
   image_header = ingest( stream, image_product_fields )
 
   # re-parse bit stream as zstack
-  stream.pos = 0 # start again to re-parse
+  stream.pos = 0  # start again to re-parse
   zstack_header = ingest( stream, zstack_product_fields )
 
   # simple, mostly-reliable, heuristic to determine product type (image or zstack)
@@ -186,7 +187,7 @@ def read_header( stream:bitstream ) ->dict:
   return image_header
 
 
-def decode_huffman( width:int, height:int, stream:bitstream ) ->dict:
+def decode_huffman( width: int, height: int, stream:bitstream ) -> dict:
 
   # sync codes precede each 2 line group (a frame)
   SYNC_CODE          = 0xFFFF0000
@@ -227,7 +228,6 @@ def decode_huffman( width:int, height:int, stream:bitstream ) ->dict:
       pixel_value = 0
 
       for n in range(BYTES_PER_FRAME):
-         
         value = get_symbol()
         pixel_value = (pixel_value + value) & 0xff   # difference coding
         frame_buf[n] = pixel_value
@@ -241,10 +241,9 @@ def decode_huffman( width:int, height:int, stream:bitstream ) ->dict:
       stream.pos = (stream.pos+31) & ~31
 
 
-
 # Read image payload after MSSS Mini-Header
 
-def read_image( stream:bitstream, header:dict ):
+def read_image( stream: bitstream, header: dict ):
 
   cmode   = header['image_compression_mode'] 
   quality = header['image_quality']
@@ -278,7 +277,7 @@ def read_image( stream:bitstream, header:dict ):
     # Losslessly compressed image, SIS 4.4.5.3 
     # ----------------------------------------------
 
-    print( f'Writing lossless to img_8bit.raw' )
+    print( 'Writing lossless to img_8bit.raw' )
 
     # output file will contain non-interleaved line group ordering
     with open('img_8bit.raw','wb') as outfile:
@@ -292,10 +291,10 @@ def read_image( stream:bitstream, header:dict ):
     # JPEG compression, SIS 4.4.5.4
     # ----------------------------------------------
 
-    SOI = '0xFFD8' # JPEG SOI marker
-    offsets = stream.findall( SOI, bytealigned=True) # start of each JPEG in bits
-    offsets = list(offsets) + [len(stream)]          # include final bit at EOI
-    segments = zip(offsets,offsets[1:])              # as segment pairs
+    SOI = '0xFFD8'  # JPEG SOI marker
+    offsets = stream.findall( SOI, bytealigned=True)  # start of each JPEG in bits
+    offsets = list(offsets) + [len(stream)]           # include final bit at EOI
+    segments = zip(offsets,offsets[1:])               # as segment pairs
 
     for frame_num, seg in enumerate(segments):
 
@@ -323,7 +322,7 @@ def read_file( testfile:str ):
       raise ValueError( f'magic_initial is {header["magic_initial"]} not {MAGIC_INITIAL}' )
 
     # then subsequent image payload, always at byte 64
-    read_image( stream[64*8:], header ) # shallow copy
+    read_image( stream[64*8:], header )  # shallow copy
 
 
 

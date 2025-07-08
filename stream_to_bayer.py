@@ -32,12 +32,11 @@
 # SOFTWARE.
 
 
-import sys
 import numpy as np
 import argparse
 
 
-#-------------------------------------------------------------
+# -------------------------------------------------------------
 #
 # This function interleaves stream order from decode_dat.py
 # into natural CCD Bayer order
@@ -140,5 +139,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-

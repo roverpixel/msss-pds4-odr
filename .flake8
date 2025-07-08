@@ -1,0 +1,12 @@
+
+[flake8]
+# Ignore specific error codes
+ignore = E201,E202,E221,E226,E231,E241,E303,E305,E501,E701,W291
+# Adjust maximum line length
+max-line-length = 99
+# Set indentation size 
+indent-size = 2
+# Exclude certain directories or files from linting
+#exclude = .git,__pycache__,docs,venv,migrations
+# Increase verbosity to see more info during checks (optional)
+# verbose = 1

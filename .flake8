@@ -8,5 +8,5 @@ max-line-length = 99
 indent-size = 2
 # Exclude certain directories or files from linting
 #exclude = .git,__pycache__,docs,venv,migrations
-# Increase verbosity to see more info during checks (optional)
-# verbose = 1
+# Increase verbosity to see more info during checks 
+verbose = 1

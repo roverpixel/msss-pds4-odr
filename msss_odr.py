@@ -4,7 +4,7 @@
 #
 # msss_odr.py
 #
-# Reference software to decode an MSSS ODR MiniHeader and decompress 
+# Reference software to decode an MSSS ODR Mini-Header and decompress 
 # an MSSS Original Data Record Payload
 #
 # Release 2025-04-01
@@ -92,7 +92,7 @@ ae_fields = [
 ]
 
 
-# zstack command fields
+# ZStack command fields
 # overlap af_fields and ae_fields of image
 
 zstack_fields = [
@@ -147,7 +147,7 @@ miniheader_part2_fields = [
 image_product_fields = start_fields + image_fields + af_fields + ae_fields + compression_fields +  \
   flags_status_fields + mech_fields + miniheader_part2_fields
 
-# fields combined to decode a zstack product
+# fields combined to decode a ZStack product
 zstack_product_fields = start_fields + image_fields + zstack_fields + compression_fields +  \
   flags_status_fields + mech_fields + miniheader_part2_fields
 
@@ -175,12 +175,12 @@ def read_header( stream: bitstream ) -> dict:
   # parse bit stream as image
   image_header = ingest( stream, image_product_fields )
 
-  # re-parse bit stream as zstack
+  # re-parse bit stream as ZStack
   stream.pos = 0  # start again to re-parse
   zstack_header = ingest( stream, zstack_product_fields )
 
-  # simple, mostly-reliable, heuristic to determine product type (image or zstack)
-  # use of Telemetry application_id in xml label is recommended
+  # simple, mostly-reliable, heuristic to determine product type (image or ZStack)
+  # use of focus_mode in xml label is recommended as noted in the documentation
   if zstack_header['focus_merge_start_camera_product_id'] == 0: return image_header
   if zstack_header['focus_merge_depth'] in range(1,9): return zstack_header
 

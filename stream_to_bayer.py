@@ -66,7 +66,7 @@ import argparse
 
 
 
-def raw_to_bayer( raw_lines:np.array,  width:int, height:int ):
+def raw_to_bayer( raw_lines:np.ndarray,  width:int, height:int ):
 
   # groups of 4
 
